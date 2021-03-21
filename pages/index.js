@@ -8,11 +8,9 @@ const HomePage = () =>{
 
   return (
     <div>
-      <h1>Home Page</h1>
-      <Center>
+      <Center py={10}>
         <EventList events={featuredEvents}/>
       </Center>
-      
     </div>
   );
 }
