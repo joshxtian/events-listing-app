@@ -25,9 +25,7 @@ const EventItem = ({
   const formattedAddress = location.replace(",", "\n");
 
   const loadEventDetailsHandler = () => {
-    router.push({
-      pathname: `/events/${id}`,
-    });
+    router.push(`/events/${id}`);
   };
 
   return (
