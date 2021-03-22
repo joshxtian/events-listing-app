@@ -25,7 +25,7 @@ const EventSearch = (props) => {
             <FormLabel lineHeight={10}>Year</FormLabel>
             <Select placeholder="Year" ref={yearInputRef}>
               <option value="2021">2021</option>
-              <option value="2020">2020</option>
+              <option value="2022">2022</option>
             </Select>
           </FormControl>
           <FormControl display="flex" flexDirection="row">

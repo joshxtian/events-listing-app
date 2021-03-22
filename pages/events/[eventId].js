@@ -2,7 +2,7 @@ import {useEffect} from 'react';
 import { Box, Center, Heading, Text } from "@chakra-ui/layout";
 import { useRouter } from "next/router";
 import { getEventById } from "../../dummy-data";
-import {EventItemCard} from '../../components';
+import {EventItemCard, MessageBox} from '../../components';
 
 const EventDetailPage = () => {
   const router = useRouter();
@@ -10,7 +10,7 @@ const EventDetailPage = () => {
   console.log(router.query);
   const event = getEventById(router.query.eventId);
   if(!event){
-    return <p>No Event Found</p>
+    return <MessageBox>No Event Found</MessageBox>
   }
 
   return (
