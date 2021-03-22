@@ -1,5 +1,5 @@
 import {getFeaturedEvents} from '../dummy-data';
-import {EventList} from '../components'; 
+import {EventList, HeaderText} from '../components'; 
 import { Center } from '@chakra-ui/layout';
 
 const HomePage = () =>{
@@ -7,11 +7,12 @@ const HomePage = () =>{
   const featuredEvents = getFeaturedEvents();
 
   return (
-    <div>
+    <>
+      <HeaderText>Featured Events</HeaderText>
       <Center py={10}>
         <EventList events={featuredEvents}/>
       </Center>
-    </div>
+    </>
   );
 }
 export default HomePage;
