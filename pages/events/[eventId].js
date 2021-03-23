@@ -1,16 +1,31 @@
 import {useEffect} from 'react';
 import { Box, Center, Heading, Text } from "@chakra-ui/layout";
 import { useRouter } from "next/router";
-import { getEventById } from "../../dummy-data";
-import {EventItemCard, MessageBox} from '../../components';
+import {getEventById, getFeaturedEvents} from '../../helpers/api-util';
+import {EventItemCard} from '../../components';
+import { Spinner } from '@chakra-ui/spinner';
 
-const EventDetailPage = () => {
-  const router = useRouter();
+const EventDetailPage = (props) => {
+  const event = props.selectedEvent;
 
-  console.log(router.query);
-  const event = getEventById(router.query.eventId);
   if(!event){
-    return <MessageBox>No Event Found</MessageBox>
+    return( 
+      <Center>
+        <Box
+        h={"100vh"}
+        display="flex"
+        alignItems="center"
+        >
+          <Spinner
+          size="xl"
+          >
+            No Event Found
+          </Spinner>
+        </Box>
+        
+      </Center>
+      
+    )
   }
 
   return (
@@ -44,4 +59,29 @@ const EventDetailPage = () => {
     </Box>
   );
 };
+
+export const getStaticProps = async(context) =>{
+  const eventId = context.params.eventId;
+  const event = await getEventById(eventId);
+
+  return {
+    props:{
+      selectedEvent: event,
+    },
+    revalidate:30
+  }
+
+}
+
+export const getStaticPaths = async() =>{
+  
+  const events = await getFeaturedEvents();
+  const paths = events.map(event=>({params:{eventId:event.id}}))
+
+  return {
+    paths:paths,
+    fallback: "blocking",
+  }
+}
+
 export default EventDetailPage;
