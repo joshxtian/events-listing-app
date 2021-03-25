@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { EventList, MessageBox } from "../../components";
 import { getFilteredEvents } from "../../dummy-data";
 import { useEffect, useState } from "react";
-import Head from 'next/head';
+import Head from "next/head";
 
 const FilteredEventsPage = () => {
   const router = useRouter();
@@ -28,19 +28,44 @@ const FilteredEventsPage = () => {
     }
   }, [data]);
 
+ 
+
+  let pageHeadData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta
+        name="description"
+        description={`A list of filtered events`}
+      />
+    </Head>
+  );
+
   if (!foundEvents) {
     return (
-      <Center>
-        <Box h={"100vh"} display="flex" alignItems="center">
-          <Spinner size="xl" />
-        </Box>
-      </Center>
+      <>
+        {pageHeadData}
+        <Center>
+          <Box h={"100vh"} display="flex" alignItems="center">
+            <Spinner size="xl" />
+          </Box>
+        </Center>
+      </>
     );
   }
   const filteredYear = filterData[0];
   const filteredMonth = filterData[1];
   const numYear = +filteredYear;
   const numMonth = +filteredMonth;
+
+  pageHeadData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta
+        name="description"
+        description={`All events for ${(numYear, numMonth)}`}
+      />
+    </Head>
+  );
 
   if (
     isNaN(numYear) ||
@@ -51,7 +76,13 @@ const FilteredEventsPage = () => {
     numMonth > 12 ||
     error
   ) {
-    return <p>Invalid filter please check you info</p>;
+    return (
+        <>
+          {pageHeadData}
+          <p>Invalid filter please check you info</p>
+        </>
+       
+      );
   }
 
   const filteredEvents = foundEvents.filter((event) => {
@@ -69,16 +100,11 @@ const FilteredEventsPage = () => {
   const date = new Date(numYear, numMonth);
 
   return (
-  <>
-    <Head>
-      <title>Filtered Events</title>
-      <meta name="description" description={`All events for ${numYear, numMonth}`}/>
-    </Head>
-    <Center>
-      <EventList events={filteredEvents} />
-    </Center>
-  </>
-    
+    <>
+      <Center>
+        <EventList events={filteredEvents} />
+      </Center>
+    </>
   );
 };
 

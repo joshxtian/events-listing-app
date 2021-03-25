@@ -1,4 +1,5 @@
-import { Image } from '@chakra-ui/image'
+
+import Image from 'next/image';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import { AtSignIcon, CalendarIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 
@@ -22,9 +23,8 @@ const EventItemCard = ({title,location,date, image}) => {
         <Box p="6">
           <Image
           src={`/${image}`}
-          borderRadius="full"
-          border="5px solid white"
-          boxSize="200px"
+          height={200}
+          width={200}
         />
         </Box>
         <Box

@@ -1,10 +1,23 @@
 import { useEffect } from "react";
-import { Box, Center, Heading, Text } from "@chakra-ui/layout";
+import {
+  Box,
+  Center,
+  Flex,
+  Heading,
+  HStack,
+  Stack,
+  Text,
+  VStack,
+} from "@chakra-ui/layout";
 import { useRouter } from "next/router";
 import { getEventById, getFeaturedEvents } from "../../helpers/api-util";
 import { EventItemCard } from "../../components";
 import { Spinner } from "@chakra-ui/spinner";
 import Head from "next/head";
+import { Button } from "@chakra-ui/button";
+import { FormControl, FormLabel } from "@chakra-ui/form-control";
+import { Input } from "@chakra-ui/input";
+import { Textarea } from "@chakra-ui/textarea";
 
 const EventDetailPage = (props) => {
   const event = props.selectedEvent;
@@ -35,11 +48,49 @@ const EventDetailPage = (props) => {
         </Box>
         <Center display="flex" flexDirection="column">
           <EventItemCard {...event} />
-          <Text mt={5} w={900} textAlign="center" fontWeight="500">
+          <Text mt={5} fontWeight="500">
             {event.description}
           </Text>
         </Center>
       </Box>
+      <Center my="5">
+        <Button variant="outline" colorScheme="blue">
+          Show Comments
+        </Button>
+      </Center>
+
+      <Center>
+        <Flex w="45%" flexDirection="column">
+          <Box bg="#272627" borderRadius={5} w="100%" as="form" p={5} color="white">
+            <Stack>
+              <HStack spacing={10}>
+                <FormControl id="email">
+                  <FormLabel>Your Email</FormLabel>
+                  <Input input="email" placeholder="Enter Your Email" />
+                </FormControl>
+                <FormControl id="name">
+                  <FormLabel>Your Name</FormLabel>
+                  <Input input="text" placeholder="Enter Your Name"/>
+                </FormControl>
+              </HStack>
+              <Box>
+                <FormControl id="comment">
+                  <FormLabel>Your Comment</FormLabel>
+                  <Textarea
+                    placeholder="Say Something"
+                    resize="none"
+                    rows={10}
+                  />
+                </FormControl>
+                <Button float="right" mt={3} variant="outline">Submit</Button>
+              </Box>
+            </Stack>
+          </Box>
+          <Box>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto reprehenderit praesentium molestiae natus eligendi in nulla ipsa, nam distinctio voluptatem quos ratione cupiditate animi excepturi maiores ex architecto sed quod.
+          </Box>
+        </Flex>
+      </Center>
     </>
   );
 };
