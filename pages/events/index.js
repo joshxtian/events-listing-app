@@ -3,6 +3,7 @@ import { Center } from "@chakra-ui/layout";
 import { EventList, EventSearch } from "../../components";
 import {getAllEvents} from '../../helpers/api-util';
 import {HeaderText} from '../../components';
+import Head from 'next/head';
 
 const EventsPage = ({events}) =>{
   const router = useRouter();
@@ -14,6 +15,9 @@ const EventsPage = ({events}) =>{
 
   return (
     <>
+      <Head>
+        <title>All Events</title>
+      </Head>
       <HeaderText>
         All Events
       </HeaderText>
