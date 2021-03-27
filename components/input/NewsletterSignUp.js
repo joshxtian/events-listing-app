@@ -6,6 +6,7 @@ import { useState, useRef } from "react";
 
 const NewsletterSignUp = () => {
   const email = useRef();
+  
   const submitHandler = (e) => {
     e.preventDefault();
     fetch("/api/newsletter", {
