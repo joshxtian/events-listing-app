@@ -14,7 +14,6 @@ import CommentBox from "../../components/comments/CommentBox";
 const EventDetailPage = (props) => {
   const event = props.selectedEvent;
   const [displayComments, setDisplayComments] = useState(false);
-  const [commentList, setCommentList] = useState([]);
 
   if (!event) {
     return (
@@ -27,12 +26,6 @@ const EventDetailPage = (props) => {
       </>
     );
   }
-
-  useEffect(()=>{
-    if(displayComments){
-      fetch(`/api/comments/${event.id}`).then(response=>response.json()).then(data=>setCommentList(data.comments));
-    }
-  },[displayComments]);
 
   return (
     <>
@@ -65,12 +58,31 @@ const EventDetailPage = (props) => {
       {displayComments && <Comments eventId={event.id} />}
       {displayComments && (
         <>
-          <Center>
-            <CommentsList>
-              {commentList.map(comment=>{
-                return <CommentBox key={comment.id} id={comment.id} content={comment.comment} name={comment.name}/>
-              })}
-            </CommentsList>
+          <Heading mt={10} textAlign="center">
+            Comments
+          </Heading>
+
+          <Center my={20}>
+            {props.comments ? (
+              <>
+                <CommentsList>
+                  {props.comments.map((comment) => {
+                    return (
+                      <CommentBox
+                        key={comment.id}
+                        id={comment.id}
+                        content={comment.comment}
+                        name={comment.name}
+                      />
+                    );
+                  })}
+                </CommentsList>
+              </>
+            ) : (
+              <>
+                <Spinner/>
+              </>
+            )}
           </Center>
         </>
       )}
@@ -81,11 +93,17 @@ const EventDetailPage = (props) => {
 export const getStaticProps = async (context) => {
   const eventId = context.params.eventId;
   const event = await getEventById(eventId);
+  const commentsData = await fetch(
+    `http://localhost:3000/api/comments/${eventId}`
+  );
+  const comments = await commentsData.json();
+
   return {
     props: {
       selectedEvent: event,
+      comments: comments.comments,
     },
-    revalidate: 30,
+    revalidate: 20,
   };
 };
 

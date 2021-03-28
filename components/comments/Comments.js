@@ -4,6 +4,7 @@ import CommentInput from "../input/CommentInput";
 
 
 const Comments = (props) => {
+
   const addCommentHandler = (comment) => {
     fetch(`/api/comments/${props.eventId}`, {
       method: "POST",
@@ -12,8 +13,6 @@ const Comments = (props) => {
         "Content-Type": "application/json",
       },
     })
-      .then((response) => response.json())
-      .then((data) => console.log(data));
   };
   return (
     <>

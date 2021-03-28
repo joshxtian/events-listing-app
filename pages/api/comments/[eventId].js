@@ -1,5 +1,15 @@
-const handler = (req, res) => {
+import { MongoClient } from "mongodb";
+
+const handler = async (req, res) => {
   const eventId = req.query.eventId;
+
+  const client = await MongoClient.connect(
+    "mongodb+srv://admin-josh:jamieisdabomb99@cluster0.5ge51.mongodb.net/EventDB?retryWrites=true&w=majority",
+    {
+      useUnifiedTopology: true,
+    }
+  );
+  const db = client.db();
   if (req.method === "POST") {
     // Server side Validation
     const { email, name, comment } = req.body;
@@ -11,21 +21,28 @@ const handler = (req, res) => {
       comment.trim() === ""
     ) {
       res.status(422).json({ message: "invalid input" });
-      return;
+    } else {
+      const newComment = {
+        eventId: eventId,
+        email,
+        name,
+        comment,
+      };
+      const commentData = await db.collection("comments").insertOne(newComment);
+      res.status(201).json({ message: "added comment" });
     }
-    const newComment = {
-      id: new Date().toISOString(),
-      email,
-      name,
-      comment,
-    };
-    res.status(201).json({ message: "added comment", comment: newComment });
   } else if (req.method === "GET") {
-    const dummyList = [
-      { id: "c1", name: "Josh", comment: "First Comment" },
-      { id: "c2", name: "Posh", comment: "Second Comment" },
-    ];
-    res.status(200).json({ comments: dummyList });
+    const comments = await db
+      .collection("comments")
+      .find({ eventId })
+      .sort({ _id: -1 })
+      .toArray();
+
+    if (comments) {
+      res.status(200).json({ comments: comments });
+    } else {
+      res.status(404).json({ message: "There are no comments" });
+    }
   }
 };
 
