@@ -1,28 +1,5 @@
-import { MongoClient } from "mongodb";
+import {connectDB, insertDocument} from '../../helpers/db-utils';
 
-const connectDB = async () => {
-  const client = await MongoClient.connect(
-    "mongodb+srv://admin-josh:jamieisdabomb99@cluster0.5ge51.mongodb.net/EventDB?retryWrites=true&w=majority",
-    {
-      useUnifiedTopology: true,
-    }
-  );
-  return client;
-};
-
-const insertDocument = async (client, document) => {
-  const db = client.db();
-  const foundEmail = await db.collection('emails').findOne(document);
-
-  if(foundEmail){
-    throw new Error("This email is already registered");
-  }
-  else{
-    await db.collection("emails").insertOne(document);
-  }
-  
-  
-};
 
 const handler = async (req, res) => {
   if (req.method === "POST") {
@@ -35,7 +12,7 @@ const handler = async (req, res) => {
       try {
         client =  await connectDB();
       } catch (error) {
-        res.status(500).json({ message: "Connecting to the database failed!" });
+        res.status(500).json({ error: "Connecting to the database failed!" });
         return;
       }
 
@@ -46,7 +23,7 @@ const handler = async (req, res) => {
         res.status(201).json({ message: "Successful!" });
         client.close();
       } catch (error) {
-        res.status(500).json({ message: `${error.message}` });
+        res.status(500).json({ error: `${error.message}` });
       }
     }
   }

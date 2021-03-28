@@ -1,11 +1,14 @@
 import { Button } from "@chakra-ui/button";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input } from "@chakra-ui/input";
+import { Text } from "@chakra-ui/layout";
 import { Box, Center } from "@chakra-ui/layout";
 import { useState, useRef } from "react";
 
 const NewsletterSignUp = () => {
   const email = useRef();
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   
   const submitHandler = (e) => {
     e.preventDefault();
@@ -15,11 +18,10 @@ const NewsletterSignUp = () => {
       headers:{
         'Content-Type': 'application/json'
       }
-    });
+    }).then(response=>response.json()).then(data=>data.message ? setMessage(data.message): setError(data.error))
   };
-
   return (
-    <Center>
+    <Center flexDir="column">
       <Box as="form" onSubmit={submitHandler}>
         <FormControl id="email" display="flex">
           <Input type="email" placeholder="Your Email" ref={email} />
@@ -28,6 +30,8 @@ const NewsletterSignUp = () => {
           </Button>
         </FormControl>
       </Box>
+      {message && <Text color="green">{message}</Text>}
+      {error && <Text color="red">{error}</Text>}
     </Center>
   );
 };

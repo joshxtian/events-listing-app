@@ -14,18 +14,25 @@ import CommentBox from "../../components/comments/CommentBox";
 const EventDetailPage = (props) => {
   const event = props.selectedEvent;
   const [displayComments, setDisplayComments] = useState(false);
+  const [commentsList, setCommentsList] = useState([]);
 
   if (!event) {
     return (
       <>
         <Center>
           <Box h={"100vh"} display="flex" alignItems="center">
-            <Spinner size="xl">No Event Found</Spinner>
+            <Spinner size="xl"/>
           </Box>
         </Center>
       </>
     );
   }
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/api/comments/${event.id}`)
+      .then((response) => response.json())
+      .then((data) => setCommentsList(data.comments))
+  }, [commentsList]);
 
   return (
     <>
@@ -63,13 +70,13 @@ const EventDetailPage = (props) => {
           </Heading>
 
           <Center my={20}>
-            {props.comments ? (
+            {commentsList.length !== 0 ? (
               <>
                 <CommentsList>
-                  {props.comments.map((comment) => {
+                  {commentsList.map((comment) => {
                     return (
                       <CommentBox
-                        key={comment.id}
+                        key={comment._id}
                         id={comment.id}
                         content={comment.comment}
                         name={comment.name}
@@ -80,7 +87,7 @@ const EventDetailPage = (props) => {
               </>
             ) : (
               <>
-                <Spinner/>
+                <Text>There are no comments in this event yet</Text>
               </>
             )}
           </Center>
@@ -93,15 +100,10 @@ const EventDetailPage = (props) => {
 export const getStaticProps = async (context) => {
   const eventId = context.params.eventId;
   const event = await getEventById(eventId);
-  const commentsData = await fetch(
-    `http://localhost:3000/api/comments/${eventId}`
-  );
-  const comments = await commentsData.json();
 
   return {
     props: {
       selectedEvent: event,
-      comments: comments.comments,
     },
     revalidate: 20,
   };

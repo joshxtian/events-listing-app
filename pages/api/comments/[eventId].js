@@ -1,15 +1,8 @@
-import { MongoClient } from "mongodb";
+import {connectDB, getEventCommentById, insertNewComment} from '../../../helpers/db-utils';
 
 const handler = async (req, res) => {
   const eventId = req.query.eventId;
 
-  const client = await MongoClient.connect(
-    "mongodb+srv://admin-josh:jamieisdabomb99@cluster0.5ge51.mongodb.net/EventDB?retryWrites=true&w=majority",
-    {
-      useUnifiedTopology: true,
-    }
-  );
-  const db = client.db();
   if (req.method === "POST") {
     // Server side Validation
     const { email, name, comment } = req.body;
@@ -21,23 +14,36 @@ const handler = async (req, res) => {
       comment.trim() === ""
     ) {
       res.status(422).json({ message: "invalid input" });
-    } else {
-      const newComment = {
-        eventId: eventId,
-        email,
-        name,
-        comment,
-      };
-      const commentData = await db.collection("comments").insertOne(newComment);
-      res.status(201).json({ message: "added comment" });
-    }
-  } else if (req.method === "GET") {
-    const comments = await db
-      .collection("comments")
-      .find({ eventId })
-      .sort({ _id: -1 })
-      .toArray();
+      return;
 
+    } else {
+      let client;
+      try {
+        client = await connectDB();
+      } catch (error) {
+        res.status(500).json({message:error.message})
+      }
+      try{
+        const newComment = {
+          eventId: eventId,
+          email,
+          name,
+          comment,
+        };
+        await insertNewComment(client,newComment)
+        res.status(201).json({ message: "added comment" });
+      }catch(error){
+        res.status(500).json({message:"Failed to subscribe"})
+      }
+    
+    }
+  } 
+
+
+  if (req.method === "GET") {
+    const client = await connectDB();
+
+    const comments = await getEventCommentById(client,eventId);
     if (comments) {
       res.status(200).json({ comments: comments });
     } else {
